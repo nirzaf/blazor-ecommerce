@@ -10,9 +10,9 @@ public static class ConfigureServices
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        services.AddValidatorsFromAssemblyContaining<ConfigureServices>();
 
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<ConfigureServices>());
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
