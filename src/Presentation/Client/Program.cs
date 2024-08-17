@@ -31,7 +31,8 @@ builder.Services.AddMudServices();
 builder.Services.AddLocalization();
 
 var apiUrl = builder.Configuration.GetValue<string>("AppConfig:ApiUrl");
-builder.Services.AddHttpClient(sp => new HttpClient
+
+builder.Services.AddScoped(sp => new HttpClient
 {
     BaseAddress = new Uri(!string.IsNullOrEmpty(apiUrl) ? apiUrl : builder.HostEnvironment.BaseAddress),
 }.EnableIntercept(sp));
