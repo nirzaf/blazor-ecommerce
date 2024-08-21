@@ -3,7 +3,7 @@
 @page "/{categoryUrl}"
 @inject IProductService ProductService
 @implements IDisposable
-@inject IStringLocalizer<Resource> localizer
+@inject IStringLocalizer<Resource> Localizer
 
 <PageTitle>My Shop</PageTitle>
 
@@ -13,11 +13,11 @@ Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />*@
 
-<h1>@localizer["welcome"]</h1>
+<h1>@Localizer["welcome"]</h1>
 
 <ErrorBoundary @ref="errorBoundary">
     <ChildContent>
-        @if (SearchText == null && CategoryUrl == null)
+        @if (string.IsNullOrEmpty(SearchText) || string.IsNullOrEmpty(CategoryUrl))
         {
             <FeatureProducts />
         }
