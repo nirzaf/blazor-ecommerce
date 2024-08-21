@@ -46,24 +46,22 @@ namespace BlazorEcommerce.Identity.Service
             {
                 return new DataResponse<AuthResponseDto>(new AuthResponseDto(), HttpStatusCodes.NotFound, Messages.UserNameOrPasswordIsIncorrect, false);
             }
-            else
-            {
-                JwtSecurityToken jwtSecurityToken = await GenerateToken(user);
 
-                string jwtToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+            JwtSecurityToken jwtSecurityToken = await GenerateToken(user);
 
-                string refreshToken = CreateRefreshToken();
+            string jwtToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
 
-                await _userManager.RemoveLoginAsync(user, AuthenticatorStoreLoginProvider, refreshToken);
+            string refreshToken = CreateRefreshToken();
 
-                await _userManager.AddLoginAsync(user, new UserLoginInfo(AuthenticatorStoreLoginProvider, refreshToken, user.UserName));
+            await _userManager.RemoveLoginAsync(user, AuthenticatorStoreLoginProvider, refreshToken);
 
-                await _userManager.SetAuthenticationTokenAsync(user, AuthenticatorStoreLoginProvider, AuthenticatorKeyTokenName, jwtToken);
+            await _userManager.AddLoginAsync(user, new UserLoginInfo(AuthenticatorStoreLoginProvider, refreshToken, user.UserName));
 
-                var authResponseDto = new AuthResponseDto() { RefreshToken = refreshToken, Token = jwtToken };
+            await _userManager.SetAuthenticationTokenAsync(user, AuthenticatorStoreLoginProvider, AuthenticatorKeyTokenName, jwtToken);
 
-                return new DataResponse<AuthResponseDto>(authResponseDto, HttpStatusCodes.Accepted);
-            }
+            var authResponseDto = new AuthResponseDto() { RefreshToken = refreshToken, Token = jwtToken };
+
+            return new DataResponse<AuthResponseDto>(authResponseDto, HttpStatusCodes.Accepted);
         }
 
         public async Task<IResponse> RefreshToken(RefreshTokenRequest request)
@@ -120,16 +118,14 @@ namespace BlazorEcommerce.Identity.Service
                 await _userManager.AddToRoleAsync(user, "User");
                 return new DataResponse<string>(user.Id, HttpStatusCodes.Accepted, Messages.RegisteredSuccesfully);
             }
-            else
-            {
-                List<string> str = new List<string>();
-                foreach (var err in result.Errors)
-                {
-                    str.Add(err.Description);
-                }
 
-                return new DataResponse<string?>(null, HttpStatusCodes.BadRequest, str, false);
+            List<string> str = new List<string>();
+            foreach (var err in result.Errors)
+            {
+                str.Add(err.Description);
             }
+
+            return new DataResponse<string?>(null, HttpStatusCodes.BadRequest, str, false);
         }
 
         #region private methods

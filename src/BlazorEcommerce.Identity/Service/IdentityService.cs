@@ -133,16 +133,13 @@ public class IdentityService : IIdentityService
         {
             return new DataResponse<bool>(true, HttpStatusCodes.Accepted,Messages.PasswordChangedSuccess);
         }
-        else
+
+        List<string> str = new List<string>();
+        foreach (var err in result.Errors)
         {
-            List<string> str = new List<string>();
-            foreach (var err in result.Errors)
-            {
-                str.Add(err.Description);
-            }
-
-            return new DataResponse<string?>(null, HttpStatusCodes.BadRequest, str, false);
-
+            str.Add(err.Description);
         }
+
+        return new DataResponse<string?>(null, HttpStatusCodes.BadRequest, str, false);
     }
 }

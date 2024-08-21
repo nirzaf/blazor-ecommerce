@@ -30,8 +30,8 @@ builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddMudServices();
 builder.Services.AddLocalization();
 
-//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 var apiUrl = builder.Configuration.GetValue<string>("AppConfig:ApiUrl");
+
 builder.Services.AddScoped(sp => new HttpClient
 {
     BaseAddress = new Uri(!string.IsNullOrEmpty(apiUrl) ? apiUrl : builder.HostEnvironment.BaseAddress),

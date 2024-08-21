@@ -33,16 +33,13 @@ namespace BlazorEcommerce.Server.Controllers
 			{
 				return BadRequest(response);
 			}
-			else
+
+			var responseCast = (DataResponse<AuthResponseDto>)response;
+
+			if (responseCast != null)
 			{
-				var responseCast = (DataResponse<AuthResponseDto>)response;
-
-				if (responseCast != null)
-				{
-                    setTokenCookie(responseCast.Data.RefreshToken);
-                }
-
-            }
+				setTokenCookie(responseCast.Data.RefreshToken);
+			}
 
 			return Ok(response);
 		}
@@ -57,15 +54,12 @@ namespace BlazorEcommerce.Server.Controllers
             {
                 return BadRequest(response);
             }
-            else
+
+            var responseCast = (DataResponse<AuthResponseDto>)response;
+
+            if (responseCast != null)
             {
-                var responseCast = (DataResponse<AuthResponseDto>)response;
-
-                if (responseCast != null)
-                {
-                    setTokenCookie(responseCast.Data.RefreshToken);
-                }
-
+	            setTokenCookie(responseCast.Data.RefreshToken);
             }
 
             return Ok(response);

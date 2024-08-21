@@ -13,7 +13,7 @@ public static class ConfigureServices
     {
         var connectionString = configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-        services.AddDbContext<PersistenceDataContext>(options =>
+        services.AddDbContextFactory<PersistenceDataContext>(options =>
             options.UseSqlServer(connectionString));
 
         services.AddScoped<PersistenceDbContextInitialiser>();

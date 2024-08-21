@@ -10,9 +10,9 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<StripeConfig>(configuration.GetSection("StripeSettings"));
+        services.AddOptions<StripeConfig>().Bind(configuration.GetSection("StripeSettings"));
 
-        services.Configure<AppConfig>(configuration.GetSection("AppConfig"));
+        services.AddOptions<AppConfig>().Bind(configuration.GetSection("AppConfig"));
 
         services.AddScoped<IPaymentService, PaymentService>();
 

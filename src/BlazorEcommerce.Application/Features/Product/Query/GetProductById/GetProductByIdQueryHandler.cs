@@ -28,11 +28,8 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQueryReq
         {
             return new DataResponse<string?>(null, HttpStatusCodes.NotFound, String.Format(Messages.NotExist, "Product"), false);
         }
-        else
-        {
-            return new DataResponse<ProductDto>(_mapper.Map<ProductDto>(product), HttpStatusCodes.Accepted);
 
-        }
+        return new DataResponse<ProductDto>(_mapper.Map<ProductDto>(product), HttpStatusCodes.Accepted);
 
     }
 }

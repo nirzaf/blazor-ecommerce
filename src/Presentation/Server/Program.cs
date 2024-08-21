@@ -7,6 +7,8 @@ using BlazorEcommerce.Infrastructure;
 using BlazorEcommerce.Persistence;
 using BlazorEcommerce.Persistence.Contexts;
 using BlazorEcommerce.Server.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 

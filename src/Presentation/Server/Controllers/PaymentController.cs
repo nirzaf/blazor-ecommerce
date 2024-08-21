@@ -33,10 +33,8 @@ namespace BlazorEcommerce.Server.Controllers
                 var session = await _paymentService.CreateCheckoutSession(resultCast.Data);
                 return Ok(session);
             }
-            else
-            {
-                return Ok(result);
-            }
+
+            return Ok(result);
         }
 
         [HttpPost]

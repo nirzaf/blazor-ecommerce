@@ -20,10 +20,8 @@
             {
                 return await GetAddress();
             }
-            else
-            {
-                return new AddressDto();
-            }
+
+            return new AddressDto();
         }
 
         public async Task<AddressDto> GetAddress()
@@ -35,10 +33,8 @@
             {
                 return response.Data;
             }
-            else
-            {
-                return new AddressDto();
-            }
+
+            return new AddressDto();
         }
     }
 }

@@ -20,10 +20,8 @@ public class QueryRepository<T, TKey> : IQueryRepository<T, TKey> where T : Base
         {
             return await context.Set<T>().IgnoreQueryFilters().Where(predicate).AnyAsync();
         }
-        else
-        {
-            return await context.Set<T>().Where(predicate).AnyAsync();
-        }
+
+        return await context.Set<T>().Where(predicate).AnyAsync();
     }
 
     public async Task<IQueryable<T>> GetAllAsync(bool isChangeTracking = false, bool ignoreQueryFilters = false)
@@ -37,14 +35,12 @@ public class QueryRepository<T, TKey> : IQueryRepository<T, TKey> where T : Base
             }
             return await Task.Run(() => query.IgnoreQueryFilters().AsQueryable());
         }
-        else
+
+        if (!isChangeTracking)
         {
-            if (!isChangeTracking)
-            {
-                return query = query.AsNoTracking().AsQueryable();
-            }
-            return await Task.Run(() => query.AsQueryable());
+            return query = query.AsNoTracking().AsQueryable();
         }
+        return await Task.Run(() => query.AsQueryable());
     }
 
     public async Task<IEnumerable<T>> GetAllWithIncludeAsync(bool isChangeTracking = false, Expression<Func<T, bool>> predicate = null, bool ignoreQueryFilters = false, params Expression<Func<T, object>>[] includes)

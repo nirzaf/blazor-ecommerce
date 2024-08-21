@@ -55,10 +55,8 @@ namespace BlazorEcommerce.Client.Services.AuthService
                     await _authStateProvider.GetAuthenticationStateAsync();
                     return response.Data.Token;
                 }
-                else
-                {
-                    _navigationManager.NavigateTo("login");
-                }
+
+                _navigationManager.NavigateTo("login");
             }
 
             return string.Empty;
