@@ -55,16 +55,17 @@ else
     private string GetPriceText(ProductDto product)
     {
         var variants = product.Variants;
-        if (variants.Count == 0)
+        switch (variants.Count)
         {
-            return string.Empty;
+            case 0:
+                return string.Empty;
+            case 1:
+                return $"${variants[0].Price}";
+            default:
+            {
+                decimal minPrice = variants.Min(v => v.Price);
+                return $"Starting at ${minPrice}";
+            }
         }
-
-        if (variants.Count == 1)
-        {
-            return $"${variants[0].Price}";
-        }
-        decimal minPrice = variants.Min(v => v.Price);
-        return $"Starting at ${minPrice}";
     }
 }
