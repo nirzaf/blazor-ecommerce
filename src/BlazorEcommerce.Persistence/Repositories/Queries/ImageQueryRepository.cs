@@ -1,8 +1,27 @@
-﻿namespace BlazorEcommerce.Persistence.Repositories.Queries;
+using MongoDB.Driver;
+using BlazorEcommerce.Application.Repositories.Queries;
+using BlazorEcommerce.Domain.Entities;
+using BlazorEcommerce.Persistence.Contexts;
 
-public class ImageQueryRepository : QueryRepository<Image, int>, IImageQueryRepository
+namespace BlazorEcommerce.Persistence.Repositories.Queries
 {
-    public ImageQueryRepository(PersistenceDataContext context) : base(context)
+    public class ImageQueryRepository : IImageQueryRepository
     {
+        private readonly IMongoCollection<Image> _images;
+
+        public ImageQueryRepository(PersistenceDataContext context)
+        {
+            _images = context.Images;
+        }
+
+        public async Task<Image> GetByIdAsync(int id)
+        {
+            return await _images.Find(i => i.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<Image>> GetAllAsync()
+        {
+            return await _images.Find(_ => true).ToListAsync();
+        }
     }
 }

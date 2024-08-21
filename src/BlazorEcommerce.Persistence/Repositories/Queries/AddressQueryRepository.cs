@@ -1,8 +1,27 @@
-﻿namespace BlazorEcommerce.Persistence.Repositories.Queries;
+using MongoDB.Driver;
+using BlazorEcommerce.Application.Repositories.Queries;
+using BlazorEcommerce.Domain.Entities;
+using BlazorEcommerce.Persistence.Contexts;
 
-public class AddressQueryRepository : QueryRepository<Address, int>, IAddressQueryRepository
+namespace BlazorEcommerce.Persistence.Repositories.Queries
 {
-    public AddressQueryRepository(PersistenceDataContext context) : base(context)
+    public class AddressQueryRepository : IAddressQueryRepository
     {
+        private readonly IMongoCollection<Address> _addresses;
+
+        public AddressQueryRepository(PersistenceDataContext context)
+        {
+            _addresses = context.Addresses;
+        }
+
+        public async Task<Address> GetByIdAsync(int id)
+        {
+            return await _addresses.Find(a => a.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<Address>> GetAllAsync()
+        {
+            return await _addresses.Find(_ => true).ToListAsync();
+        }
     }
 }

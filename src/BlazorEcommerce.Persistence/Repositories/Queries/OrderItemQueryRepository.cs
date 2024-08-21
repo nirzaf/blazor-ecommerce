@@ -1,8 +1,27 @@
-﻿namespace BlazorEcommerce.Persistence.Repositories.Queries;
+using MongoDB.Driver;
+using BlazorEcommerce.Application.Repositories.Queries;
+using BlazorEcommerce.Domain.Entities;
+using BlazorEcommerce.Persistence.Contexts;
 
-public class OrderItemQueryRepository : QueryRepository<OrderItem, int>, IOrderItemQueryRepository
+namespace BlazorEcommerce.Persistence.Repositories.Queries
 {
-    public OrderItemQueryRepository(PersistenceDataContext context) : base(context)
+    public class OrderItemQueryRepository : IOrderItemQueryRepository
     {
+        private readonly IMongoCollection<OrderItem> _orderItems;
+
+        public OrderItemQueryRepository(PersistenceDataContext context)
+        {
+            _orderItems = context.OrderItems;
+        }
+
+        public async Task<OrderItem> GetByIdAsync(int id)
+        {
+            return await _orderItems.Find(oi => oi.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<OrderItem>> GetAllAsync()
+        {
+            return await _orderItems.Find(_ => true).ToListAsync();
+        }
     }
 }

@@ -1,39 +1,40 @@
-﻿using BlazorEcommerce.Application.Contracts.Identity;
+using MongoDB.Driver;
+using BlazorEcommerce.Application.Repositories.Queries;
 using BlazorEcommerce.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using BlazorEcommerce.Persistence.Contexts;
 
-namespace BlazorEcommerce.Persistence.Repositories.Queries;
-
-public class ProductQueryRepository : QueryRepository<Product, int>, IProductQueryRepository
+namespace BlazorEcommerce.Persistence.Repositories.Queries
 {
-    public ProductQueryRepository(PersistenceDataContext context) : base(context)
+    public class ProductQueryRepository : IProductQueryRepository
     {
-    }
+        private readonly IMongoCollection<Product> _products;
 
-    public async Task<IList<Product>> GetAllAdminProductAsync()
-    {
-        return await context.Products
-            .Include(p => p.Images)
-            .Include(p => p.Variants).ThenInclude(p => p.ProductType)
-            .ToListAsync();
-    }
-
-    public async Task<Product> GetProductByIdAsync(int id, bool isAdminRole)
-    {
-        if (isAdminRole)
+        public ProductQueryRepository(PersistenceDataContext context)
         {
-            return await context.Products
-                .Include(p => p.Images)
-                .Include(p => p.Variants).ThenInclude(p => p.ProductType)
-                .FirstOrDefaultAsync(p => p.Id == id);
+            _products = context.Products;
         }
-        else
+
+        public async Task<IList<Product>> GetAllAdminProductAsync()
         {
-            return await context.Products
-                .Include(p => p.Images)
-                .Include(p => p.Variants).ThenInclude(p => p.ProductType)
-                .FirstOrDefaultAsync(p => p.Id == id && p.IsActive);
-        };
+            return await _products
+                .Find(_ => true)
+                .ToListAsync();
+        }
+
+        public async Task<Product> GetProductByIdAsync(int id, bool isAdminRole)
+        {
+            if (isAdminRole)
+            {
+                return await _products
+                    .Find(p => p.Id == id)
+                    .FirstOrDefaultAsync();
+            }
+            else
+            {
+                return await _products
+                    .Find(p => p.Id == id && p.IsActive)
+                    .FirstOrDefaultAsync();
+            }
+        }
     }
 }

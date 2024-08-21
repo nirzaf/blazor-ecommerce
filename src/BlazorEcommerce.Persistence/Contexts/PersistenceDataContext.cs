@@ -1,54 +1,67 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Reflection;
+using MongoDB.Driver;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.IdGenerators;
+using MongoDB.Bson.Serialization.Serializers;
 
-namespace BlazorEcommerce.Server.Contexts
+namespace BlazorEcommerce.Persistence.Contexts
 {
-    public class PersistenceDataContext : DbContext
+    public class PersistenceDataContext
     {
-        public PersistenceDataContext(DbContextOptions<PersistenceDataContext> options) : base(options)
+        private readonly IMongoDatabase _database;
+
+        public PersistenceDataContext(IMongoClient mongoClient)
         {
-
-        }
-        
-        public DbSet<Product> Products { get; set; }
-
-        public DbSet<Category> Categories { get; set; }
-
-        public DbSet<ProductType> ProductTypes { get; set; }
-
-        public DbSet<ProductVariant> ProductVariants { get; set; }
-
-        public DbSet<CartItem> CartItems { get; set; }
-
-        public DbSet<Order> Orders { get; set; }
-
-        public DbSet<OrderItem> OrderItems { get; set; }
-
-        public DbSet<Address> Addresses { get; set; }
-
-        public DbSet<Image> Images { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
+            _database = mongoClient.GetDatabase("BlazorEcommerceDb");
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public IMongoCollection<Product> Products => _database.GetCollection<Product>("Products");
+
+        public IMongoCollection<Category> Categories => _database.GetCollection<Category>("Categories");
+
+        public IMongoCollection<ProductType> ProductTypes => _database.GetCollection<ProductType>("ProductTypes");
+
+        public IMongoCollection<ProductVariant> ProductVariants => _database.GetCollection<ProductVariant>("ProductVariants");
+
+        public IMongoCollection<CartItem> CartItems => _database.GetCollection<CartItem>("CartItems");
+
+        public IMongoCollection<Order> Orders => _database.GetCollection<Order>("Orders");
+
+        public IMongoCollection<OrderItem> OrderItems => _database.GetCollection<OrderItem>("OrderItems");
+
+        public IMongoCollection<Address> Addresses => _database.GetCollection<Address>("Addresses");
+
+        public IMongoCollection<Image> Images => _database.GetCollection<Image>("Images");
+
+        public void Configure()
         {
-            modelBuilder.Entity<CartItem>()
-                .HasKey(ci => new { ci.UserId, ci.ProductId, ci.ProductTypeId });
+            BsonClassMap.RegisterClassMap<CartItem>(cm =>
+            {
+                cm.AutoMap();
+                cm.SetIdMember(cm.GetMemberMap(c => c.UserId));
+                cm.IdMemberMap.SetIdGenerator(StringObjectIdGenerator.Instance);
+            });
 
-            modelBuilder.Entity<ProductVariant>()
-                .HasKey(p => new { p.ProductId, p.ProductTypeId });
+            BsonClassMap.RegisterClassMap<ProductVariant>(cm =>
+            {
+                cm.AutoMap();
+                cm.SetIdMember(cm.GetMemberMap(p => p.ProductId));
+                cm.IdMemberMap.SetIdGenerator(StringObjectIdGenerator.Instance);
+            });
 
-            modelBuilder.Entity<OrderItem>()
-                .HasKey(oi => new { oi.OrderId, oi.ProductId, oi.ProductTypeId });
+            BsonClassMap.RegisterClassMap<OrderItem>(cm =>
+            {
+                cm.AutoMap();
+                cm.SetIdMember(cm.GetMemberMap(oi => oi.OrderId));
+                cm.IdMemberMap.SetIdGenerator(StringObjectIdGenerator.Instance);
+            });
 
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-
-            modelBuilder.Entity<Address>().HasQueryFilter(x => !x.IsDeleted);
-
-            base.OnModelCreating(modelBuilder);
+            BsonClassMap.RegisterClassMap<Address>(cm =>
+            {
+                cm.AutoMap();
+                cm.SetIdMember(cm.GetMemberMap(a => a.Id));
+                cm.IdMemberMap.SetIdGenerator(StringObjectIdGenerator.Instance);
+                cm.SetIgnoreExtraElements(true);
+            });
         }
     }
 }
