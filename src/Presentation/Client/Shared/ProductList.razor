@@ -1,7 +1,7 @@
 ﻿@inject IProductService ProductService
 @implements IDisposable
 
-@if (ProductService.Products == null || ProductService.Products.Count == 0)
+@if (ProductService.Products.Count == 0)
 {
     <span>@ProductService.Message</span>
 }
