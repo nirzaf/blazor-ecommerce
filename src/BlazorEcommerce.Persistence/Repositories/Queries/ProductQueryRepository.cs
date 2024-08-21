@@ -28,12 +28,11 @@ public class ProductQueryRepository : QueryRepository<Product, int>, IProductQue
                 .Include(p => p.Variants).ThenInclude(p => p.ProductType)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
-        else
-        {
-            return await context.Products
-                .Include(p => p.Images)
-                .Include(p => p.Variants).ThenInclude(p => p.ProductType)
-                .FirstOrDefaultAsync(p => p.Id == id && p.IsActive);
-        };
+
+        return await context.Products
+            .Include(p => p.Images)
+            .Include(p => p.Variants).ThenInclude(p => p.ProductType)
+            .FirstOrDefaultAsync(p => p.Id == id && p.IsActive);
+        ;
     }
 }

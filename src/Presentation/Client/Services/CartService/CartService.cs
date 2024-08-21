@@ -82,23 +82,21 @@ namespace BlazorEcommerce.Client.Services.CartService
 
                 return new List<CartProductResponse>();
             }
-            else
-            {
-                var cartItems = await _localStorage.GetItemAsync<List<CartItemDto>>("cart");
-                if (cartItems == null)
-                    return new List<CartProductResponse>();
-                var response = await _http.PostAsJsonAsync($"{CartBaseURL}products", cartItems);
-                var cartProducts = 
-                    await response.Content.ReadFromJsonAsync<ApiResponse<List<CartProductResponse>>>();
 
-                if (cartProducts != null && cartProducts.Success)
-                {
-                    return cartProducts.Data;
-
-                }
-
+            var cartItems = await _localStorage.GetItemAsync<List<CartItemDto>>("cart");
+            if (cartItems == null)
                 return new List<CartProductResponse>();
+            var response = await _http.PostAsJsonAsync($"{CartBaseURL}products", cartItems);
+            var cartProducts = 
+                await response.Content.ReadFromJsonAsync<ApiResponse<List<CartProductResponse>>>();
+
+            if (cartProducts != null && cartProducts.Success)
+            {
+                return cartProducts.Data;
+
             }
+
+            return new List<CartProductResponse>();
 
         }
 

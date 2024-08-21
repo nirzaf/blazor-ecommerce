@@ -39,11 +39,9 @@ namespace BlazorEcommerce.Server.Controllers
             {
                 return new DataResponse<List<CartProductResponse>>(new List<CartProductResponse>(), HttpStatusCodes.NotFound);
             }
-            else
-            {
-                return Ok(await _mediator.Send(new GetDbCartProductsQueryRequest()));
-            }
-           
+
+            return Ok(await _mediator.Send(new GetDbCartProductsQueryRequest()));
+
         }
 
         [HttpPost("add")]

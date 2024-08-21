@@ -59,7 +59,8 @@ else
         {
             return string.Empty;
         }
-        else if (variants.Count == 1)
+
+        if (variants.Count == 1)
         {
             return $"${variants[0].Price}";
         }

@@ -29,10 +29,8 @@ namespace BlazorEcommerce.Client.Services.OrderService
             {
                 return result.Data;
             }
-            else
-            {
-                return new OrderDetailsResponse();
-            }
+
+            return new OrderDetailsResponse();
         }
 
         public async Task<List<OrderOverviewResponse>> GetOrders()
@@ -43,10 +41,8 @@ namespace BlazorEcommerce.Client.Services.OrderService
             {
                 return result.Data;
             }
-            else
-            {
-                return new List<OrderOverviewResponse>();
-            }
+
+            return new List<OrderOverviewResponse>();
         }
 
         public async Task<string> PlaceOrder()
@@ -61,15 +57,11 @@ namespace BlazorEcommerce.Client.Services.OrderService
                 {
                     return result.Data;
                 }
-                else
-                {
-                    return "login";
-                }
-            }
-            else
-            {
+
                 return "login";
             }
+
+            return "login";
         }
         private async Task<bool> IsUserAuthenticated()
         {
