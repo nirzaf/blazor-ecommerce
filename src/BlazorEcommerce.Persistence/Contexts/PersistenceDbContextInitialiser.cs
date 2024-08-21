@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 
 namespace BlazorEcommerce.Persistence.Contexts;
 
@@ -13,18 +13,12 @@ public class PersistenceDbContextInitialiser
 
     public async Task InitialiseAsync()
     {
-        await InitialiseWithMigrationsAsync();
+        await InitialiseWithMongoDbAsync();
     }
 
-    private async Task InitialiseWithMigrationsAsync()
+    private async Task InitialiseWithMongoDbAsync()
     {
-        if (_context.Database.IsSqlServer())
-        {
-            await _context.Database.MigrateAsync();
-        }
-        else
-        {
-            await _context.Database.EnsureCreatedAsync();
-        }
+        _context.Configure();
+        await Task.CompletedTask;
     }
 }

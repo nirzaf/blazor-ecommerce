@@ -1,9 +1,9 @@
 ﻿using BlazorEcommerce.Application.UnitOfWork;
 using BlazorEcommerce.Persistence.Contexts;
 using BlazorEcommerce.Persistence.UnitOfWork;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
 
 namespace BlazorEcommerce.Persistence;
 
@@ -13,8 +13,8 @@ public static class ConfigureServices
     {
         var connectionString = configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-        services.AddDbContext<PersistenceDataContext>(options =>
-            options.UseSqlServer(connectionString));
+        services.AddSingleton<IMongoClient, MongoClient>(sp => new MongoClient(connectionString));
+        services.AddScoped(sp => sp.GetRequiredService<IMongoClient>().GetDatabase("BlazorEcommerceDb"));
 
         services.AddScoped<PersistenceDbContextInitialiser>();
 

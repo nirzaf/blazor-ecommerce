@@ -1,32 +1,29 @@
-﻿using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 
 namespace BlazorEcommerce.Persistence.Repositories.Queries;
 
-public class OrderQueryRepository : QueryRepository<Order, int>, IOrderQueryRepository
+public class OrderQueryRepository : IOrderQueryRepository
 {
-    public OrderQueryRepository(PersistenceDataContext context) : base(context)
+    private readonly IMongoCollection<Order> _orders;
+
+    public OrderQueryRepository(PersistenceDataContext context)
     {
+        _orders = context.Orders;
     }
 
     public async Task<List<Order>> GetAllOrderByUserId(string userId)
     {
-        return await context.Orders
-                        .Include(o => o.OrderItems)
-                        .ThenInclude(oi => oi.Product)
-                        .OrderByDescending(o => o.OrderDate)
-                        .Where(o => o.UserId == userId)
+        return await _orders
+                        .Find(o => o.UserId == userId)
+                        .SortByDescending(o => o.OrderDate)
                         .ToListAsync();
     }
 
     public async Task<Order> GetOrderDetails(string userId, int id)
     {
-        var order = await context.Orders
-           .Include(o => o.OrderItems)
-           .ThenInclude(oi => oi.Product)
-           .Include(o => o.OrderItems)
-           .ThenInclude(oi => oi.ProductType)
-           .Where(o => o.UserId == userId && o.Id == id)
-           .OrderByDescending(o => o.OrderDate)
+        var order = await _orders
+           .Find(o => o.UserId == userId && o.Id == id)
+           .SortByDescending(o => o.OrderDate)
            .FirstOrDefaultAsync();
 
         return order;
